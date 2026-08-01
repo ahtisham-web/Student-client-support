@@ -248,29 +248,29 @@ Simple health check: `{"status": "ok"}`
   later, but it is not used for local/LAN hosting and can be safely ignored
   or deleted.
 
-Related questions (should route to Ollama Cloud)
+## Related questions (should route to Ollama Cloud)
 
-DEVFORGE / internship specific
+## DEVFORGE / internship specific
 
 "What is the DEVFORGE internship program about?"
 "What tasks are usually assigned during a DEVFORGE internship?"
 "How do I get my DEVFORGE certificate after finishing tasks?"
 
-AI Engineering / LangChain / LangGraph
+## AI Engineering / LangChain / LangGraph
 
 "What's the difference between LangChain and LangGraph?"
 "How do I add a conditional branch in LangGraph?"
 "What is a StateGraph in LangGraph?"
 "How do AI agents decide which tool to use?"
 
-Python / FastAPI
+## Python / FastAPI
 
 "What's the difference between a list and a tuple in Python?"
 "How do I add request validation in FastAPI using Pydantic?"
 "How do I handle errors properly in a FastAPI endpoint?"
 "What is async/await used for in Python?"
 
-Web development
+## Web development
 
 "What's the difference between frontend and backend development?"
 "How does CORS work in a web app?"
@@ -281,7 +281,7 @@ GitHub / Render / deployment
 "What's the difference between git push and git pull?"
 "How do environment variables work when deploying on Render?"
 
-Student tasks / project guidance
+## Student tasks / project guidance
 
 "How should I structure my Python project folders?"
 "What should I include in my README file for a project submission?"

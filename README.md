@@ -248,7 +248,7 @@ Simple health check: `{"status": "ok"}`
   later, but it is not used for local/LAN hosting and can be safely ignored
   or deleted.
 
-## Related questions (should route to Ollama Cloud)
+## Related questions you can ask limited
 
 ## DEVFORGE / internship specific
 

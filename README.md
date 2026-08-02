@@ -119,7 +119,6 @@ laptop, a teammate's PC), bind to `0.0.0.0` and use a fixed port:
 ```powershell
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-<!-- http://127.0.0.1:8000/ui/ -->
 
 You'll see `INFO: Application startup complete.` — **this is correct and
 expected.** The server is now running and will occupy this terminal; it
@@ -200,7 +199,108 @@ restart Step 2c. If you need it always-on regardless of your PC's state,
 that requires an external host (like Render) — outside the scope of this
 local setup.
 
-## 4. API reference
+## 3b. Deploy to Railway (public hosting, alternative to local/LAN)
+
+If you want the agent reachable from anywhere (not just your own Wi-Fi),
+Railway is a simple option. This project already includes the two files
+Railway needs: `Procfile` and `railway.json`.
+
+### Step 1 — Push your code to GitHub
+
+```powershell
+git init
+git add .
+git commit -m "DEVFORGE Student Support AI Agent"
+git branch -M main
+git remote add origin https://github.com/your-username/your-repo.git
+git push -u origin main
+```
+
+(Create an empty repo on github.com first if you haven't, then use that URL.)
+
+### Step 2 — Create a new Railway project
+
+1. Go to https://railway.com and sign in (GitHub login is easiest).
+2. Click **New Project** → **Deploy from GitHub repo**.
+3. Select your `devforge-agent` repository.
+4. Railway will detect it's a Python app automatically (via Nixpacks) and
+   read `Procfile` / `railway.json` for the start command — no manual
+   build/start command setup needed.
+
+### Step 3 — Add your environment variables
+
+In your Railway project → click your service → **Variables** tab → add:
+
+| Variable | Value |
+|---|---|
+| `OLLAMA_API_KEY` | your real Ollama Cloud key |
+| `OLLAMA_CLOUD_URL` | `https://ollama.com/api/chat` |
+| `OLLAMA_MODEL` | `gpt-oss:120b-cloud` (or another model you confirmed works, see Step 2b above) |
+
+Railway automatically provides `$PORT` — you don't need to set that
+yourself; it's already used in the `Procfile`/`railway.json` start command.
+
+### Step 4 — Deploy
+
+Railway deploys automatically after you add variables (or click **Deploy**
+if it hasn't started). Watch the **Deployments** tab for build/start logs.
+
+### Step 5 — Get your public URL
+
+1. In your service, go to **Settings** → **Networking** → **Generate Domain**.
+2. Railway gives you a public URL like:
+   ```
+   https://devforge-agent-production.up.railway.app
+   ```
+
+### Step 6 — Test the live deployment
+
+- Root status check: `https://<your-app>.up.railway.app/`
+- Chat page (no commands needed): `https://<your-app>.up.railway.app/ui`
+- Swagger docs: `https://<your-app>.up.railway.app/docs`
+
+Open `/ui` in the browser, type a question, and confirm you get a real
+answer — same as your local test. Since it's now publicly hosted, anyone
+with the link can use it (no Wi-Fi/LAN restriction), and it stays online
+even when your own PC is off.
+
+### Notes for Railway
+
+- Every push to your GitHub `main` branch triggers an automatic redeploy.
+- Free tier includes limited monthly usage hours/credits — check Railway's
+  current pricing page if you plan to keep it running long-term.
+- If a deploy fails, check the **Deployments → View Logs** tab first — the
+  traceback there tells you exactly what broke (same as reading your local
+  uvicorn terminal output).
+
+## 4. Chat frontend (no commands needed to use it)
+
+Once your server is running, students don't need PowerShell, curl, or
+Swagger — there's a simple chat webpage built in.
+
+Open in a browser:
+```
+http://127.0.0.1:8000/ui
+```
+or, from another device on the same network:
+```
+http://<your-local-ip>:8000/ui
+```
+
+Type a message, press Enter (or click Send), and it calls your `/chat`
+endpoint automatically and shows the reply — related questions show a
+"✅ related question" tag, unrelated ones show "⚠️ unrelated question".
+
+There's a small "Backend URL" field at the top of the page (defaults to
+`http://127.0.0.1:8000`). If you're opening the page from another device,
+change that field to `http://<your-local-ip>:8000` so it points at the PC
+actually running the server.
+
+The frontend file lives at `frontend/index.html` and is served
+automatically by FastAPI (`app/main.py` mounts it at `/ui`) — no separate
+server or build step needed.
+
+## 5. API reference
 
 ### `POST /chat`
 Request body:
@@ -220,7 +320,7 @@ Response body:
 ### `GET /health`
 Simple health check: `{"status": "ok"}`
 
-## 5. Troubleshooting (issues encountered + fixes)
+## 6. Troubleshooting (issues encountered + fixes)
 
 | Symptom | Cause | Fix |
 |---|---|---|
@@ -234,6 +334,7 @@ Simple health check: `{"status": "ok"}`
 | `uvicorn : not recognized` | Virtual environment isn't active in this terminal (prompt shows `PS ...` not `(venv) PS ...`) | Run `venv\Scripts\Activate.ps1` again |
 | Env vars "disappear" between commands | PowerShell variables (`$env:...`, `$myKey`) only live in the terminal session they were set in | Re-set them every time you open a new terminal, or switch to a `.env` file loaded via `python-dotenv` |
 | Other devices on Wi-Fi can't reach the API | Server bound to `127.0.0.1` only, or firewall blocking it | Use `--host 0.0.0.0`, allow Python through Windows Firewall on Private networks, confirm both devices are on the same network |
+| `/ui` shows "Couldn't reach the backend" in the chat page | The "Backend URL" field doesn't match where the server is actually running | Update the Backend URL field at the top of `/ui` to match the address you used to open the page (e.g. `http://<your-local-ip>:8000`) |
 
 ## Notes
 

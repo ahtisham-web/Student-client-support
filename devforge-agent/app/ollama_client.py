@@ -46,6 +46,8 @@ def ask_ollama_cloud(user_message: str) -> str:
     headers = {
         "Authorization": f"Bearer {OLLAMA_API_KEY}",
         "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (compatible; DEVFORGE-Student-Support-Agent/1.0)",
+        "Accept": "application/json",
     }
 
     payload = {
@@ -76,3 +78,4 @@ def ask_ollama_cloud(user_message: str) -> str:
 
     except requests.exceptions.RequestException as e:
         return f"Sorry, I couldn't reach the AI model right now. Error: {e}"
+
